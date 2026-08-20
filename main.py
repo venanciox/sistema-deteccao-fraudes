@@ -48,37 +48,39 @@ class Transacao:
         self.novo_destinatario = novo_destinatario
         self.transacoes_ultima_hora = transacoes_ultima_hora
 
-def calcular_risco(transacao):
-    risco = 0
-    motivos = []
+class DetectorFraude:
 
-    if transacao.valor > 4999:
-        risco += 30
-        motivos.append("Valor alto")
+    def calcular_risco(self, transacao):
+        risco = 0
+        motivos = []
 
-    if 0 <= transacao.hora <= 5:
-        risco += 25
-        motivos.append("Horário incomum")
+        if transacao.valor > 4999:
+            risco += 30
+            motivos.append("Valor alto")
 
-    if transacao.novo_destinatario.lower() == "s":
-        risco += 20
-        motivos.append("Destinatário novo")
+        if 0 <= transacao.hora <= 5:
+            risco += 25
+            motivos.append("Horário incomum")
 
-    if transacao.transacoes_ultima_hora >= 5:
-        risco += 25
-        motivos.append("Muitas transações recentes")
+        if transacao.novo_destinatario.lower() == "s":
+            risco += 20
+            motivos.append("Destinatário novo")
 
-    risco = min(risco, 100)
+        if transacao.transacoes_ultima_hora >= 5:
+            risco += 25
+            motivos.append("Muitas transações recentes")
 
-    return risco, motivos
+        risco = min(risco, 100)
 
-def classificar_risco(risco):
-    if risco >= 60:
-        return "🔴 ALTO RISCO"
-    elif risco >= 30:
-        return "🟡 RISCO MÉDIO"
-    else:
-        return "🟢 BAIXO RISCO"
+        return risco, motivos
+
+    def classificar_risco(self, risco):
+        if risco >= 60:
+            return "🔴 ALTO RISCO"
+        elif risco >= 30:
+            return "🟡 RISCO MÉDIO"
+        else:
+            return "🟢 BAIXO RISCO"
 
 def mostrar_resultado(risco, classificacao, motivos):
     print()
@@ -101,9 +103,11 @@ def main():
 
     nova_transacao = Transacao(valor, hora, novo_destinatario, transacoes_ultima_hora)
 
-    risco, motivos = calcular_risco(nova_transacao)
+    detector = DetectorFraude()
 
-    classificacao = classificar_risco(risco)
+    risco, motivos = detector.calcular_risco(nova_transacao)
+
+    classificacao = detector.classificar_risco(risco)
 
     mostrar_resultado(
         risco,
