@@ -41,23 +41,30 @@ def obter_inteiro_positivo(mensagem):
         except ValueError:
             print("⚠️ Erro: Digite um número inteiro válido.")
 
-def calcular_risco(valor, hora, novo_destinatario, transacoes_ultima_hora):
+class Transacao:
+    def __init__(self, valor, hora, novo_destinatario, transacoes_ultima_hora):
+        self.valor = valor
+        self.hora = hora
+        self.novo_destinatario = novo_destinatario
+        self.transacoes_ultima_hora = transacoes_ultima_hora
+
+def calcular_risco(transacao):
     risco = 0
     motivos = []
 
-    if valor > 4999:
+    if transacao.valor > 4999:
         risco += 30
         motivos.append("Valor alto")
 
-    if 0 <= hora <= 5:
+    if 0 <= transacao.hora <= 5:
         risco += 25
         motivos.append("Horário incomum")
 
-    if novo_destinatario.lower() == "s":
+    if transacao.novo_destinatario.lower() == "s":
         risco += 20
         motivos.append("Destinatário novo")
 
-    if transacoes_ultima_hora >= 5:
+    if transacao.transacoes_ultima_hora >= 5:
         risco += 25
         motivos.append("Muitas transações recentes")
 
@@ -92,12 +99,9 @@ def main():
     novo_destinatario = obter_sim_nao("Destinatário novo? (s/n): ")
     transacoes_ultima_hora = obter_inteiro_positivo("Quantas transações feitas na última hora?: ")
 
-    risco, motivos = calcular_risco(
-        valor,
-        hora,
-        novo_destinatario,
-        transacoes_ultima_hora
-    )
+    nova_transacao = Transacao(valor, hora, novo_destinatario, transacoes_ultima_hora)
+
+    risco, motivos = calcular_risco(nova_transacao)
 
     classificacao = classificar_risco(risco)
 
