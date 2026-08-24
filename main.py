@@ -16,24 +16,39 @@ def mostrar_resultado(risco, classificacao, motivos):
 def main():
     print("=== SISTEMA DE DETECÇÃO DE FRAUDES ===")
 
-    valor = obter_float("Digite o valor da transferência: ")
-    hora = obter_hora("Digite a hora da transferência: ")
-    novo_destinatario = obter_sim_nao("Destinatário novo? (s/n): ")
-    transacoes_ultima_hora = obter_inteiro_positivo("Quantas transações feitas na última hora?: ")
-
-    nova_transacao = Transacao(valor, hora, novo_destinatario, transacoes_ultima_hora)
-
     detector = DetectorFraude()
 
-    risco, motivos = detector.calcular_risco(nova_transacao)
+    total_analisadas = 0
+    total_alto_risco = 0
 
-    classificacao = detector.classificar_risco(risco)
+    while True:
+        print("\n--- NOVA ANÁLISE ---")
+        valor = obter_float("Digite o valor da transferência: ")
+        hora = obter_hora("Digite a hora da transferência: ")
+        novo_destinatario = obter_sim_nao("Destinatário novo? (s/n): ")
+        transacoes_ultima_hora = obter_inteiro_positivo("Quantas transações feitas na última hora?: ")
 
-    mostrar_resultado(
-        risco,
-        classificacao,
-        motivos
-    )
+        nova_transacao = Transacao(valor, hora, novo_destinatario, transacoes_ultima_hora)
+
+        risco, motivos = detector.calcular_risco(nova_transacao)
+        classificacao = detector.classificar_risco(risco)
+
+        mostrar_resultado(risco, classificacao, motivos)
+
+        total_analisadas += 1
+
+        if risco >= 60:
+            total_alto_risco += 1
+
+        continuar = obter_sim_nao("Deseja analisar outra transação? (s/n): ")
+        if continuar == 'n':
+            print("\nEncerrando o sistema...")
+            break
+
+    print("\n=== RESUMO DO ANÁLISES ===")
+    print(f"Transações analisadas: {total_analisadas}")
+    print(f"Alertas de Alto Risco: {total_alto_risco}")
+    print("Sistema encerrado com sucesso.\n")
 
 if __name__ == "__main__":
     main()
