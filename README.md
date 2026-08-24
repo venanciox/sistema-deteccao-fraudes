@@ -18,4 +18,4 @@ Novas funcionalidades, regras de detecção e melhorias serão adicionadas confo
 
 ## Objetivo
 
-Desenvolver progressivamente um sistema de análise de risco enquanto aplico e aprimorar conhecimentos de programação e desenvolvimento de software.
+Desenvolver progressivamente um sistema de análise de risco enquanto aplico e aprimoro conhecimentos de programação e desenvolvimento de software.
