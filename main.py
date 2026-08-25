@@ -1,3 +1,5 @@
+from datetime import datetime
+import csv
 from validators import obter_float, obter_hora, obter_sim_nao, obter_inteiro_positivo
 from models import Transacao
 from services import DetectorFraude
@@ -12,6 +14,26 @@ def mostrar_resultado(risco, classificacao, motivos):
 
     for motivo in motivos:
         print(f"- {motivo}")
+
+def exportar_relatorio(historico):
+    if len(historico) == 0:
+        return
+
+    agora = datetime.now()
+
+    data_hora_formatada = agora.strftime("%d-%m-%Y_%Hh%M")
+    nome_arquivo = f"relatorio_fraudes_{data_hora_formatada}.csv"
+
+    with open(nome_arquivo, mode="w", newline="", encoding="utf-8") as arquivo:
+        colunas = ["valor_transferido", "risco_calculado", "status"]
+        escritor = csv.DictWriter(arquivo, fieldnames=colunas)
+
+        escritor.writeheader()
+
+        for linha in historico:
+            escritor.writerow(linha)
+
+    print(f"Relatório exportado com sucesso: {nome_arquivo}")
 
 def main():
     print("=== SISTEMA DE DETECÇÃO DE FRAUDES ===")
@@ -66,6 +88,7 @@ def main():
 
         elif opcao == "3":
             print("\nEncerrando o sistema. Até logo!")
+            exportar_relatorio(historico_analises)
             break
 
         else:
