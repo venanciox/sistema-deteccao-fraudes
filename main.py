@@ -18,37 +18,59 @@ def main():
 
     detector = DetectorFraude()
 
-    total_analisadas = 0
-    total_alto_risco = 0
+    historico_analises = []
 
     while True:
-        print("\n--- NOVA ANÁLISE ---")
-        valor = obter_float("Digite o valor da transferência: ")
-        hora = obter_hora("Digite a hora da transferência: ")
-        novo_destinatario = obter_sim_nao("Destinatário novo? (s/n): ")
-        transacoes_ultima_hora = obter_inteiro_positivo("Quantas transações feitas na última hora?: ")
+        print("\n=== MENU PRINCIPAL ===")
+        print("1. Analisar nova transação")
+        print("2. Ver histórico de análises")
+        print("3. Sair")
 
-        nova_transacao = Transacao(valor, hora, novo_destinatario, transacoes_ultima_hora)
+        opcao = input("Escolha uma opção (1/2/3): ").strip()
 
-        risco, motivos = detector.calcular_risco(nova_transacao)
-        classificacao = detector.classificar_risco(risco)
+        if opcao == "1":
+            print("\n[ Nova Transação ]")
+            valor = obter_float("Digite o valor da transferência: ")
+            hora = obter_hora("Digite a hora da transferência: ")
+            novo_destinatario = obter_sim_nao("Destinatário novo? (s/n): ")
+            transacoes_ultima_hora = obter_inteiro_positivo("Quantas transações feitas na última hora?: ")
+            
+            nova_transacao = Transacao(valor, hora, novo_destinatario, transacoes_ultima_hora)
+            risco, motivos = detector.calcular_risco(nova_transacao)
+            classificacao = detector.classificar_risco(risco)
 
-        mostrar_resultado(risco, classificacao, motivos)
+            mostrar_resultado(risco, classificacao, motivos)
 
-        total_analisadas += 1
+            resultado = {
+                "valor_transferido": valor,
+                "risco_calculado": risco,
+                "status": classificacao
+            }
 
-        if risco >= 60:
-            total_alto_risco += 1
+            historico_analises.append(resultado)
 
-        continuar = obter_sim_nao("Deseja analisar outra transação? (s/n): ")
-        if continuar == 'n':
-            print("\nEncerrando o sistema...")
+        elif opcao == "2":
+            print("\n=== HISTÓRICO DE ANÁLISES ===")
+
+            if len(historico_analises) == 0:
+                print("Nenhuma transação foi analisada ainda.")
+            else:
+                contador = 1
+                for analise in historico_analises:
+                    v = analise["valor_transferido"]
+                    r = analise["risco_calculado"]
+                    s = analise["status"]
+
+                    print(f"{contador}. Valor: R$ {v} | Risco: {r}% | {s}")
+                    contador += 1
+
+        elif opcao == "3":
+            print("\nEncerrando o sistema. Até logo!")
             break
 
-    print("\n=== RESUMO DO ANÁLISES ===")
-    print(f"Transações analisadas: {total_analisadas}")
-    print(f"Alertas de Alto Risco: {total_alto_risco}")
-    print("Sistema encerrado com sucesso.\n")
+        else:
+            print("\nErro: Opção inválida. Escolha 1, 2 ou 3.")
+
 
 if __name__ == "__main__":
     main()
