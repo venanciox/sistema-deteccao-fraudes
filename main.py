@@ -1,5 +1,6 @@
 from datetime import datetime
 import csv
+import json
 from validators import obter_float, obter_hora, obter_sim_nao, obter_inteiro_positivo
 from models import Transacao
 from services import DetectorFraude
@@ -34,6 +35,19 @@ def exportar_relatorio(historico):
             escritor.writerow(linha)
 
     print(f"Relatório exportado com sucesso: {nome_arquivo}")
+
+def exportar_json(historico):
+    if len(historico) == 0:
+        return
+
+    agora = datetime.now()
+    data_hora_formatada = agora.strftime("%d-%m-%Y_%Hh%M")
+    nome_arquivo = f"relatorio_fraudes_{data_hora_formatada}.json"
+
+    with open(nome_arquivo, mode="w", encoding="utf-8") as arquivo:
+        json.dump(historico, arquivo, indent=4, ensure_ascii=False)
+
+    print(f"Dados exportados para a Web com sucesso: {nome_arquivo}")
 
 def main():
     print("=== SISTEMA DE DETECÇÃO DE FRAUDES ===")
@@ -89,6 +103,7 @@ def main():
         elif opcao == "3":
             print("\nEncerrando o sistema. Até logo!")
             exportar_relatorio(historico_analises)
+            exportar_json(historico_analises)
             break
 
         else:
