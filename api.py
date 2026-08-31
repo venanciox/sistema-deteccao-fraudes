@@ -1,10 +1,19 @@
+import json
+import os
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from services import DetectorFraude
 
 app = FastAPI(title="Motor Antifraude API")
 detector = DetectorFraude()
-historico_analises = []
+
+arquivo_dados = "banco_historico.json"
+
+if os.path.exists(arquivo_dados):
+    with open(arquivo_dados, "r", encoding="utf-8") as arquivo:
+        historico_analises = json.load(arquivo)
+else:
+    historico_analises = []
 
 class Transacao(BaseModel):
     valor: float = Field(gt=0)
@@ -28,15 +37,19 @@ def analisar_transacao(transacao: Transacao):
     resultado_para_historico = {
         "valor_transferido": transacao.valor,
         "risco_calculado": risco,
-        "status": classificacao
+        "status": classificacao,
+        "motivos": motivos
     }
 
     historico_analises.append(resultado_para_historico)
 
+    with open(arquivo_dados, "w", encoding="utf-8") as arquivo:
+        json.dump(historico_analises, arquivo, indent=4, ensure_ascii=False)
+
     return {
         "risco_pontuacao": risco,
         "classificacao": classificacao,
-        "motivos": motivos     
+        "motivos": motivos
     }
 
 @app.get("/historico")

@@ -1,0 +1,12 @@
+[
+    {
+        "valor_transferido": 5000.0,
+        "risco_calculado": 55,
+        "status": "🟡 RISCO MÉDIO"
+    },
+    {
+        "valor_transferido": 130.0,
+        "risco_calculado": 45,
+        "status": "🟡 RISCO MÉDIO"
+    }
+]
