@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from services import DetectorFraude
 
 app = FastAPI(title="Motor Antifraude API")
@@ -7,10 +7,10 @@ detector = DetectorFraude()
 historico_analises = []
 
 class Transacao(BaseModel):
-    valor: float
-    hora: int
-    novo_destinatario: str
-    transacoes_ultima_hora: int
+    valor: float = Field(gt=0)
+    hora: int = Field(ge=0, le=23)
+    novo_destinatario: str = Field(pattern="^(s|n|S|N)$")
+    transacoes_ultima_hora: int = Field(ge=0)
 
 @app.get("/")
 def raiz():
